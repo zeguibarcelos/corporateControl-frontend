@@ -21,8 +21,8 @@ export interface IPerfilContext {
 export const PerfilContext = createContext({} as IPerfilContext)
 
 const steps = [
-	'Channels configuration',
-	'Accounts configuration',
+	'Locals configuration',
+	'Products configuration',
 	'Confirmation',
 ];
 

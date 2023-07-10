@@ -1,10 +1,6 @@
 import React from "react";
 import {
-	createContext,
-	ReactElement,
-	useContext,
-	useEffect,
-	useState,
+	createContext, ReactElement, useContext, useEffect, useState,
 } from "react";
 import {
 	Box, Typography, useTheme, TextField, useMediaQuery, Container, Autocomplete, Accordion, AccordionSummary,
@@ -37,7 +33,7 @@ interface IExpandedChart {
 	element: ReactElement;
 }
 
-//Context----------------------------------------------------------------------------------
+// CONTEXT
 interface IDashboardContex {
 	dates: string[];
 	setDates: (dates: string[]) => void;
@@ -47,38 +43,46 @@ interface IDashboardContex {
 	setMedia: (media: IMedia[]) => void;
 }
 export const DashboardContext = createContext({} as IDashboardContex);
-//Context----------------------------------------------------------------------------------
+
 
 export const Dashboard = () => {
+
+	//DRAWER
+	const { toggleDrawerOn } = useContext(DrawerContext);
+	useEffect(() => {
+		toggleDrawerOn(true);
+	}, []);
+
 	const theme = useTheme();
 
-	//================================================================================================
 	// DATE
 	const datef = new Date();
-	let dataFormatadaf =
-		datef.getFullYear() + "/" + (datef.getMonth() + 1) + "/" + datef.getDate();
+	let dataFormatadaf = datef.getFullYear() + "/" + (datef.getMonth() + 1) + "/" + datef.getDate();
 
-	const last = new Date(datef.getTime() - 7 * 24 * 60 * 60 * 1000);
-	let dataFormatadai =
-		last.getFullYear() + "/" + (last.getMonth() + 1) + "/" + last.getDate();
-	const [idate, setIdate] = React.useState<Dayjs>(dayjs(dataFormatadai));
-	const [fdate, setFdate] = React.useState<Dayjs>(dayjs(dataFormatadaf));
-	const handleChange2 = (newValue: Dayjs | null) => {
-		if (newValue) {
-			setIdate(newValue);
-		}
-	};
-	const handleChange3 = (newValue: Dayjs | null) => {
-		if (newValue) {
-			setFdate(newValue);
-		}
-	};
+	const datei = new Date(datef.getTime() - 7 * 24 * 60 * 60 * 1000);
+	let dataFormatadai = datei.getFullYear() + "/" + (datei.getMonth() + 1) + "/" + datei.getDate();
+
+	const [startDate, setStartDate] = useState<Dayjs>(dayjs(dataFormatadai));
+	const [finalDate, setFinalDate] = useState<Dayjs>(dayjs(dataFormatadaf));
+
 	const [dates, setDates] = useState<string[]>([]);
+
+	const handleStartDate = (newValue: Dayjs | null) => {
+		if (newValue) {
+			setStartDate(newValue);
+		}
+	};
+	const handleFinalDate = (newValue: Dayjs | null) => {
+		if (newValue) {
+			setFinalDate(newValue);
+		}
+	};
+
 	let datas: string[] = [];
 	useEffect(() => {
 		setDates([]);
-		const datai = new Date(idate.toString());
-		const dataf = new Date(fdate.toString());
+		const datai = new Date(startDate.toString());
+		const dataf = new Date(finalDate.toString());
 		let novaData = datai;
 		while (novaData <= dataf) {
 			let dataFormatada =
@@ -91,10 +95,8 @@ export const Dashboard = () => {
 			novaData = new Date(novaData.getTime() + 24 * 60 * 60 * 1000);
 		}
 		setDates(datas);
-	}, [idate, fdate]);
-	//================================================================================================
+	}, [startDate, finalDate]);
 
-	//================================================================================================
 	// CHARTS RENDER
 	const [value, setValue] = useState<string[]>();
 	const [charts, setCharts] = useState<ReactElement[]>();
@@ -115,14 +117,13 @@ export const Dashboard = () => {
 		data.map((channel) => {
 			count++;
 			graph.push(
-				<Grid2 width={smDown ? 280 : 350} key={count}>
+				<Grid2 width={smDown ? 280 : 350} key={count} id="Grid2">
 					<Box
 						className={theme.palette.mode == "dark" ? "darkGlass" : "glass"}
 						border={1}
 						borderColor={theme.palette.primary.main}
 					>
 						<Box
-
 							display="flex"
 							justifyContent="flex-end"
 						>
@@ -154,13 +155,7 @@ export const Dashboard = () => {
 		setOpen(false);
 	}, [dates, value, theme]);
 
-	//================================================================================================
-	// DRAWER
-	const { toggleDrawerOn } = useContext(DrawerContext);
-	useEffect(() => {
-		toggleDrawerOn(true);
-	}, []);
-	//================================================================================================
+
 
 	const [barra, setBarra] = useState<ReactElement[]>([]);
 	const smDown: boolean = useMediaQuery(theme.breakpoints.down("sm"));
@@ -186,136 +181,138 @@ export const Dashboard = () => {
 	const [media, setMedia] = useState<any>()
 
 	return (
-		<Box display="flex" flex={1}>
-			<DashboardContext.Provider value={{ media, setMedia, barra, setBarra, dates, setDates }}>
-				<Dialog
-					fullWidth={true}
-					maxWidth="lg"
-					id="my-node"
-					onClose={closeExpand}
-					open={expand}
-				>
-					<DialogContent>
-						<Box id="my-node">
-							<Box display="flex" justifyContent="flex-end">
-								<IconButton onClick={downloadHandler.bind(this)}>
-									<DownloadIcon />
-								</IconButton>
-							</Box>
-							{expandedChart?.element}
+
+		<DashboardContext.Provider value={{ media, setMedia, barra, setBarra, dates, setDates }}>
+			<Dialog
+				fullWidth
+				maxWidth="lg"
+				id="my-node"
+				onClose={closeExpand}
+				open={expand}
+			>
+				<DialogContent>
+					<Box id="my-node">
+						<Box display="flex" justifyContent="flex-end">
+							<IconButton onClick={downloadHandler.bind(this)}>
+								<DownloadIcon />
+							</IconButton>
 						</Box>
-					</DialogContent>
-				</Dialog>
+						{expandedChart?.element}
+					</Box>
+				</DialogContent>
+			</Dialog>
+
+			<Box
+				display="flex"
+				flex={1}
+				justifyContent="center"
+				flexDirection="column"
+				minHeight="100vh"
+			>
+				<Box>
+					<Container maxWidth="sm">
+						<Box
+							display="flex"
+							justifyContent="center"
+							alignItems="center"
+							flexDirection="row"
+							sx={{
+								...commonStyles,
+								borderColor: "primary.contrastText",
+								border: 0,
+								borderRadius: 5,
+							}}
+						>
+							<Autocomplete
+								multiple
+								freeSolo
+								value={value}
+								onChange={(event: any, newValue: string[]) => {
+									setValue(newValue);
+								}}
+								id="controllable-states-demo"
+								options={[]}
+								sx={{ width: "80%" }}
+								renderInput={(params) => (
+									<TextField
+										placeholder="Channels"
+										variant="standard"
+										{...params}
+										label="Search"
+									/>
+								)}
+							/>
+
+							<SearchIcon color="primary" />
+						</Box>
+					</Container>
+				</Box>
+				<Box
+					display="flex"
+					flex={1}
+					alignItems="center"
+					justifyContent="center"
+					flexDirection={smDown ? "column" : "row"}
+				>
+					<TextMobileStepper />
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<Box padding={2}>
+							<MobileDatePicker
+								label="Initial Date"
+								inputFormat="YYYY/MM/DD"
+								value={startDate}
+								onChange={handleStartDate}
+								renderInput={(params) => <TextField {...params} />}
+							/>
+						</Box>
+						<Box padding={2}>
+							<MobileDatePicker
+								label="Final Date"
+								inputFormat="YYYY/MM/DD"
+								value={finalDate}
+								onChange={handleFinalDate}
+								renderInput={(params) => <TextField {...params} />}
+							/>
+						</Box>
+					</LocalizationProvider>
+				</Box>
 
 				<Box
 					display="flex"
 					flex={1}
+					flexDirection="row"
 					justifyContent="center"
-					flexDirection="column"
+					alignItems="center"
+					gap="25px"
 				>
-					<Box>
-						<Container maxWidth="sm">
-							<Box
-								display="flex"
-								justifyContent="center"
-								alignItems="center"
-								flexDirection="row"
-								sx={{
-									...commonStyles,
-									borderColor: "primary.contrastText",
-									border: 0,
-									borderRadius: 5,
-								}}
-							>
-								<Autocomplete
-									multiple
-									freeSolo
-									value={value}
-									onChange={(event: any, newValue: string[]) => {
-										setValue(newValue);
-									}}
-									id="controllable-states-demo"
-									options={[]}
-									sx={{ width: "80%" }}
-									renderInput={(params) => (
-										<TextField
-											placeholder="Channels"
-											variant="standard"
-											{...params}
-											label="Search"
-										/>
-									)}
-								/>
-
-								<SearchIcon color="primary" />
-							</Box>
-						</Container>
-					</Box>
-					<Box
-						display="flex"
-						flex={1}
-						alignItems="center"
-						justifyContent="center"
-						flexDirection={smDown ? "column" : "row"}
+					<Accordion
+						sx={{ ...commonStyles, border: 0, borderRadius: 1, width: 200 }}
 					>
-						<TextMobileStepper />
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<Box padding={2}>
-								<MobileDatePicker
-									label="Initial Date"
-									inputFormat="YYYY/MM/DD"
-									value={idate}
-									onChange={handleChange2}
-									renderInput={(params) => <TextField {...params} />}
-								/>
-							</Box>
-							<Box padding={2}>
-								<MobileDatePicker
-									label="Final Date"
-									inputFormat="YYYY/MM/DD"
-									value={fdate}
-									onChange={handleChange3}
-									renderInput={(params) => <TextField {...params} />}
-								/>
-							</Box>
-						</LocalizationProvider>
-					</Box>
-
-					<Grid2
-						container
-						spacing={3}
-						direction="row"
-						alignItems="center"
-						justifyContent="center"
-					>
-						<Accordion
-							sx={{ ...commonStyles, border: 0, borderRadius: 1, width: 200 }}
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls="panel1a-content"
+							id="panel1a-header"
 						>
-							<AccordionSummary
-								expandIcon={<ExpandMoreIcon />}
-								aria-controls="panel1a-content"
-								id="panel1a-header"
-							>
-								<Typography fontWeight="semibold" component="h5">
-									Legend
-								</Typography>
-							</AccordionSummary>
-							<AccordionDetails>
-								<Box>
-									<ResponsiveContainer height={"300px"}>
-										<BarChart>
-											{barra}
-											<Legend align="left" verticalAlign="middle" />
-										</BarChart>
-									</ResponsiveContainer>
-								</Box>
-							</AccordionDetails>
-						</Accordion>
-						{charts}
-					</Grid2>
+							<Typography fontWeight="semibold" component="h5">
+								Legend
+							</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							<Box>
+								<ResponsiveContainer height={"300px"}>
+									<BarChart>
+										{barra}
+										<Legend align="left" verticalAlign="middle" />
+									</BarChart>
+								</ResponsiveContainer>
+							</Box>
+						</AccordionDetails>
+					</Accordion>
+					{charts}
 				</Box>
-			</DashboardContext.Provider>
-		</Box>
+			</Box>
+		</DashboardContext.Provider>
+
 	);
 };
 

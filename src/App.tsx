@@ -5,16 +5,13 @@ import { AppContextProvider } from './context/AppContext';
 import { MenuLateral } from './components/MenuLateral';
 
 export default function App(): any {
-
   return (
     <AppContextProvider>
       <BrowserRouter>
         <AppThemeProvider>
-
           <MenuLateral>
             <MainRoutes />
           </MenuLateral>
-
         </AppThemeProvider>
       </BrowserRouter>
     </AppContextProvider>

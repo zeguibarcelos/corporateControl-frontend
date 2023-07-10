@@ -44,7 +44,7 @@ export const Chart: React.FC<Props> = ({ name, channel }) => {
 		setBar([]);
 
 		// Simule algumas datas
-		const dats = ['2023/6/29', '2023/6/30'];
+		const dats = ['2023/7/9', '2023/7/10'];
 		dates?.forEach((data) => {
 			let arr: any[] = [];
 			dats.forEach((date) => {

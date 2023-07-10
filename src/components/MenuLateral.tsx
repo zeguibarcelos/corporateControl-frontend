@@ -260,9 +260,7 @@ export const MenuLateral = ({ children }: any) => {
                     </Drawer>
 
                     <DrawerContext.Provider value={{ drawerOn, toggleDrawerOn, isDrawerOpen, toggleDrawerOpen }}>
-                        <Box display="flex" flex={1} >
-                            {children}
-                        </Box>
+                        {children}
                     </DrawerContext.Provider>
 
                 </Box>

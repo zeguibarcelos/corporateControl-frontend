@@ -64,6 +64,9 @@
 
 .bg {
   background: linear-gradient(90deg, #D1D5DE, #ffffff);
+  display: flex;
+  flex: 1;
+  justify-content: center;
 }
 
 .darkBg {
